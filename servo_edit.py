@@ -16,8 +16,8 @@ import Adafruit_PCA9685
 pwm = Adafruit_PCA9685.PCA9685()
 
 def save_step(step, servo_1_pos, servo_2_pos):
-    q = "INSERT INTO servo_log_1 (step, servo_1, servo_2) \
-    VALUES (" + str(step) + ", " + str(servo_1_pos) + ", " \
+    q = "INSERT INTO servo_log (servo_1, servo_2) \
+    VALUES (" + str(servo_1_pos) + ", " \
     + str(servo_2_pos) + ")"
     
     success = cur.execute(q)
@@ -28,7 +28,7 @@ def save_step(step, servo_1_pos, servo_2_pos):
         print("Connection to database failed")
 
 def delete_all_steps():
-    q = "DELETE FROM servo_log_1"
+    q = "DELETE FROM servo_log"
     success = cur.execute(q)
     if success:
         connection.commit()
