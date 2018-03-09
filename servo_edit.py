@@ -153,4 +153,4 @@ while True:
             
             for i in range(0, len(servo_position)):
                 print("Set servo #" + str([i]) + " to " + str(servo_position[i]))
-            # time.sleep(1)
+            time.sleep(1)

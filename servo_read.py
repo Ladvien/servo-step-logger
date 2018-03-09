@@ -27,7 +27,7 @@ def get_number_steps_in_database():
         print("Connection to database failed")
     return rows
 
-def read_steps(servo_num):
+def read_steps():
     q = "SELECT servo_1, servo_2 FROM servo_log"    
     success = cur.execute(q)
     if success:
@@ -35,6 +35,7 @@ def read_steps(servo_num):
         results = cur.fetchall()
         if results is not None:
             print("Steps from database read successfully.")
+            return results
         else:
             print("Failed to read steps from database.")
     else:
@@ -45,6 +46,7 @@ def greeting():
     print("Press 'q' to quit...")
     print("R: Resets the servo")
     print("B: Read steps from database")
+    print("P: Play steps")
     print("C: Delete database")
 
 def getch():
@@ -119,17 +121,28 @@ rows = get_number_steps_in_database()
 servo_0_steps = []
 servo_1_steps = []
 
-print(rows)
-
 while True:
     k = getch()
     if k == 'q':
         exit(0)
     elif k == 'b':
-        servo_0_steps = read_steps_for_servo(0)
-        servo_1_steps = read_steps_for_servo(1)
+        servo_steps = read_steps()
+        print(len(servo_steps))
         for i in range(0, rows):
-            print("Step #" + str(i) + "servo_0: " + str(servo_0_steps[i][0]) + "servo_1: " + str(servo_1_steps[i][1]))
+            servo_0_steps.append(servo_steps[i][0])
+            servo_1_steps.append(servo_steps[i][1])
+            print("Step #" + str(i) \
+            + " servo_0: " + str(servo_0_steps[i]) \
+            + " servo_1: " + str(servo_1_steps[i]))
+    elif k == 'p':
+        if(len(servo_0_steps) > 0):
+            for i in range(0, len(servo_0_steps)):
+                pwm.set_pwm(0, 0, servo_steps[i][0])
+                pwm.set_pwm(1, 1, servo_steps[i][1])
+                time.sleep(1/40)
+            print("Finished playing steps")
+        else:
+            print("No steps found to play")
     elif k == 'r':
         servo_position[0] = reset_pos
         servo_position[1] = reset_pos
