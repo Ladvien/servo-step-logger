@@ -27,14 +27,16 @@ def get_number_steps_in_database():
         print("Connection to database failed")
     return rows
 
-def read_step():
-    q = "SELECT ID FROM servo_log"
-    
+def read_steps(servo_num):
+    q = "SELECT servo_1, servo_2 FROM servo_log"    
     success = cur.execute(q)
     if success:
         connection.commit()
-        rows = cur.rowcount
-        print("Found "+ str(rows) + " steps")
+        results = cur.fetchall()
+        if results is not None:
+            print("Steps from database read successfully.")
+        else:
+            print("Failed to read steps from database.")
     else:
         print("Connection to database failed")
 
@@ -113,6 +115,10 @@ servo_num = 0
 step_index = 0
 
 rows = get_number_steps_in_database()
+
+servo_0_steps = []
+servo_1_steps = []
+
 print(rows)
 
 while True:
@@ -120,7 +126,10 @@ while True:
     if k == 'q':
         exit(0)
     elif k == 'b':
-        read_step()
+        servo_0_steps = read_steps_for_servo(0)
+        servo_1_steps = read_steps_for_servo(1)
+        for i in range(0, rows):
+            print("Step #" + str(i) + "servo_0: " + str(servo_0_steps[i][0]) + "servo_1: " + str(servo_1_steps[i][1]))
     elif k == 'r':
         servo_position[0] = reset_pos
         servo_position[1] = reset_pos
